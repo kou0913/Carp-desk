@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>カープ紙面一覧</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;800&family=Noto+Serif+JP:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FFFFFF;
+    --paper-deep:#F6F4EF;
+    --ink:#1A1816;
+    --ink-soft:#5c554a;
+    --rule:#DAD3C0;
+    --carp:#C41E3A;
+    --carp-deep:#9c1730;
+    --loss:#2B2B2B;
+    --gold:#8a6a1a;
+    --green-box:#2f5d3a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans JP', sans-serif;
+    min-height:100vh;
+    padding-bottom:60px;
+  }
+
+  /* ---------- Masthead ---------- */
+  .masthead{
+    background:var(--carp);
+    color:#F3ECDC;
+    padding:22px 18px 18px;
+    position:relative;
+    border-bottom:6px double #F3ECDC;
+    box-shadow:0 3px 10px rgba(0,0,0,0.25);
+  }
+  .masthead-inner{
+    max-width:720px;
+    margin:0 auto;
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .masthead-title{
+    font-family:'Shippori Mincho', serif;
+    font-weight:800;
+    font-size:26px;
+    letter-spacing:.06em;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .masthead-title .mark{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:30px;height:30px;
+    border:2px solid #F3ECDC;
+    border-radius:50%;
+    font-size:15px;
+    font-weight:800;
+    flex:none;
+  }
+  .masthead-sub{
+    font-size:11.5px;
+    letter-spacing:.08em;
+    opacity:.85;
+    font-family:'Noto Serif JP', serif;
+  }
+  .desk-signature{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    flex:none;
+  }
+  .desk-signature .avatar-badge{
+    width:40px;height:40px;
+    border-radius:50%;
+    background:#F3ECDC;
+    border:2px solid #F3ECDC;
+    flex:none;
+    overflow:hidden;
+  }
+  .desk-signature .cap{
+    font-family:'Noto Serif JP', serif;
+    font-size:10px;
+    color:#F3ECDC;
+    line-height:1.3;
+    text-align:left;
+    opacity:.9;
+  }
+  .desk-signature .cap b{
+    display:block;
+    font-size:11.5px;
+    font-family:'Shippori Mincho',serif;
+  }
+  .masthead-date{
+    max-width:720px;
+    margin:10px auto 0;
+    font-size:11px;
+    opacity:.8;
+    letter-spacing:.05em;
+    font-family:'Noto Serif JP', serif;
+  }
+
+  /* ---------- Toolbar ---------- */
+  .toolbar{
+    max-width:720px;
+    margin:18px auto 0;
+    padding:0 18px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .search{
+    flex:1 1 160px;
+    min-width:0;
+    padding:10px 12px;
+    border:1px solid var(--rule);
+    background:#ffffff;
+    font-family:'Noto Sans JP',sans-serif;
+    font-size:14.5px;
+    color:var(--ink);
+  }
+  .search:focus{outline:2px solid var(--carp); outline-offset:1px;}
+  .add-btn{
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    padding:9px 16px;
+    font-family:'Noto Serif JP',serif;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:.05em;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .add-btn:hover{background:var(--carp);}
+  .add-btn:focus-visible{outline:2px solid var(--carp); outline-offset:2px;}
+
+  .count-line{
+    max-width:720px;
+    margin:10px auto 0;
+    padding:0 18px;
+    font-size:11px;
+    color:var(--ink-soft);
+    letter-spacing:.04em;
+    font-family:'Noto Serif JP',serif;
+  }
+
+  /* ---------- Form (号外を追加) ---------- */
+  .form-wrap{
+    max-width:720px;
+    margin:14px auto 0;
+    padding:0 18px;
+  }
+  .form-card{
+    background:#ffffff;
+    border:1px solid var(--rule);
+    box-shadow:0 1px 6px rgba(0,0,0,0.06);
+    padding:16px;
+    position:relative;
+  }
+  .form-card::before{
+    content:"号外";
+    position:absolute;
+    top:-11px; left:14px;
+    background:var(--carp);
+    color:#F3ECDC;
+    font-family:'Shippori Mincho',serif;
+    font-size:11px;
+    font-weight:700;
+    padding:2px 10px;
+    letter-spacing:.1em;
+  }
+  .form-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+    margin-top:8px;
+  }
+  .field label{
+    display:block;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    letter-spacing:.08em;
+    margin-bottom:4px;
+    font-family:'Noto Serif JP',serif;
+  }
+  .field input,.field textarea,.field select{
+    width:100%;
+    border:1px solid var(--rule);
+    background:#fff;
+    padding:9px 10px;
+    font-family:'Noto Sans JP',sans-serif;
+    font-size:15px;
+    color:var(--ink);
+  }
+  .field textarea{resize:vertical; min-height:56px; font-family:'Noto Serif JP',serif; line-height:1.6;}
+  .form-row2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .form-actions{
+    display:flex; justify-content:flex-end; gap:8px; margin-top:12px;
+  }
+  .btn-secondary{
+    background:none;
+    border:1px solid var(--rule);
+    color:var(--ink-soft);
+    padding:8px 14px;
+    font-size:12.5px;
+    cursor:pointer;
+    font-family:'Noto Sans JP',sans-serif;
+  }
+  .btn-primary{
+    background:var(--carp);
+    border:1px solid var(--carp);
+    color:#fff;
+    padding:8px 16px;
+    font-size:12.5px;
+    font-weight:700;
+    cursor:pointer;
+    font-family:'Noto Serif JP',serif;
+    letter-spacing:.05em;
+  }
+  .btn-primary:hover{background:var(--carp-deep);}
+
+  /* ---------- Entries list (dense table-like) ---------- */
+  .entries{
+    max-width:760px;
+    margin:22px auto 0;
+    padding:0 18px;
+  }
+  .entry{
+    padding:14px 0;
+    border-top:1px solid var(--rule);
+    display:grid;
+    grid-template-columns:44px 1fr;
+    gap:12px;
+    position:relative;
+  }
+  .entry:first-of-type{border-top:2px solid var(--ink);}
+  .entry.pending{background:rgba(140,29,53,0.05);}
+
+  .stamp{
+    width:38px;height:38px;
+    border-radius:50%;
+    border:2.5px solid;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Shippori Mincho',serif;
+    font-weight:800;
+    font-size:14px;
+    transform:rotate(-8deg);
+    margin-top:2px;
+    flex:none;
+  }
+  .stamp.win{border-color:var(--carp); color:var(--carp);}
+  .stamp.loss{border-color:var(--loss); color:var(--loss);}
+  .stamp.other{border-color:var(--gold); color:var(--gold); font-size:11px;}
+
+  .entry-eyebrow{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    letter-spacing:.06em;
+    font-family:'Noto Serif JP',serif;
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+    margin-bottom:6px;
+  }
+  .entry-eyebrow .day{font-weight:700; color:var(--ink);}
+  .entry-eyebrow .score{
+    background:var(--green-box);
+    color:#fff;
+    padding:1px 7px;
+    font-size:11px;
+    letter-spacing:.02em;
+  }
+  .entry-eyebrow .pending-tag{
+    background:var(--carp);
+    color:#fff;
+    font-size:10px;
+    padding:1px 6px;
+    letter-spacing:.05em;
+  }
+  .entry-eyebrow .standing-tag{
+    border:1px solid var(--gold);
+    color:var(--gold);
+    font-size:10.5px;
+    padding:1px 7px;
+    letter-spacing:.02em;
+    font-family:'Noto Sans JP',sans-serif;
+    white-space:nowrap;
+  }
+  .photo-mark{
+    display:inline-block;
+    font-size:11px;
+    margin-left:4px;
+    color:var(--gold);
+  }
+  .kyuen-rating{
+    display:block;
+    margin-top:3px;
+    font-family:'Noto Sans JP',sans-serif;
+    font-size:12px;
+  }
+  .kyuen-rating .stars{
+    color:var(--gold);
+    letter-spacing:1px;
+    margin-right:6px;
+  }
+  .kyuen-rating .rating-label{
+    color:var(--ink-soft);
+    font-size:10.5px;
+    letter-spacing:.05em;
+    margin-right:4px;
+  }
+  .kyuen-rating .kyuen-rating-note{
+    color:var(--ink-soft);
+    font-style:italic;
+    font-size:11.5px;
+  }
+
+  .sec-table{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+  }
+  .sec-row{
+    display:grid;
+    grid-template-columns:84px 1fr;
+    gap:10px;
+    align-items:baseline;
+    font-size:15px;
+    line-height:1.75;
+  }
+  .sec-label{
+    font-family:'Shippori Mincho', serif;
+    font-weight:700;
+    font-size:12.5px;
+    color:var(--carp-deep);
+    white-space:nowrap;
+    padding-top:1px;
+  }
+  .sec-value{
+    font-family:'Noto Serif JP', serif;
+    color:#26221d;
+  }
+  .sec-value .who{
+    color:var(--ink);
+    font-weight:700;
+    margin-right:4px;
+  }
+  .sec-value.empty{color:#8a8272; font-style:italic; font-family:'Noto Sans JP',sans-serif; font-size:12.5px;}
+  .sec-value ul{margin:0; padding-left:16px;}
+  .sec-value li{margin-bottom:2px;}
+  .sec-value.quote{font-style:italic;}
+  .sec-value.quote::before{content:"「"; font-style:normal;}
+  .sec-value.quote::after{content:"」"; font-style:normal;}
+
+  .entry-footer{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:8px;
+  }
+  .entry-actions button{
+    background:none;border:none;cursor:pointer;
+    font-size:11px;
+    color:var(--ink-soft);
+    text-decoration:underline;
+    padding:2px 4px;
+    font-family:'Noto Sans JP',sans-serif;
+  }
+  .entry-actions button:hover{color:var(--carp);}
+
+  /* ---------- Upload zone ---------- */
+  .upload-wrap{
+    max-width:720px;
+    margin:14px auto 0;
+    padding:0 18px;
+  }
+  .upload-zone{
+    border:1.5px dashed var(--carp);
+    background:rgba(140,29,53,0.045);
+    padding:16px;
+    text-align:center;
+    cursor:pointer;
+    position:relative;
+  }
+  .upload-zone:hover{background:rgba(140,29,53,0.08);}
+  .upload-zone input{
+    position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;
+  }
+  .upload-zone .up-title{
+    font-family:'Shippori Mincho',serif;
+    font-weight:700;
+    font-size:14.5px;
+    color:var(--carp-deep);
+  }
+  .upload-zone .up-sub{
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:4px;
+    font-family:'Noto Sans JP',sans-serif;
+  }
+
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(32,29,25,0.72);
+    display:none;
+    align-items:center; justify-content:center;
+    z-index:80;
+    padding:24px;
+  }
+  .overlay.show{display:flex;}
+  .overlay-card{
+    background:var(--paper);
+    border:1px solid var(--rule);
+    padding:26px 24px;
+    max-width:320px;
+    text-align:center;
+  }
+  .overlay-card .spin{
+    width:30px;height:30px;
+    border:3px solid var(--rule);
+    border-top-color:var(--carp);
+    border-radius:50%;
+    margin:0 auto 14px;
+    animation:spin 0.9s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .overlay-card .ov-title{
+    font-family:'Shippori Mincho',serif;
+    font-weight:700;
+    font-size:15px;
+    margin-bottom:4px;
+  }
+  .overlay-card .ov-sub{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    font-family:'Noto Serif JP',serif;
+  }
+
+  .review-banner{
+    background:var(--carp);
+    color:#fff;
+    font-size:11.5px;
+    padding:8px 12px;
+    margin-bottom:10px;
+    letter-spacing:.03em;
+    font-family:'Noto Serif JP',serif;
+  }
+
+  .empty-state{
+    text-align:center;
+    padding:60px 20px;
+    color:var(--ink-soft);
+    font-family:'Noto Serif JP',serif;
+  }
+  .empty-state .big{
+    font-family:'Shippori Mincho',serif;
+    font-size:20px;
+    color:var(--ink);
+    margin-bottom:8px;
+  }
+
+  .toast{
+    position:fixed;
+    bottom:18px; left:50%;
+    transform:translateX(-50%) translateY(10px);
+    background:var(--ink);
+    color:var(--paper);
+    padding:10px 18px;
+    font-size:12.5px;
+    font-family:'Noto Sans JP',sans-serif;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+    letter-spacing:.03em;
+    z-index:50;
+    max-width:88%;
+    text-align:center;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  @media (max-width:420px){
+    .masthead-title{font-size:21px;}
+    .entry{grid-template-columns:40px 1fr; gap:10px;}
+    .stamp{width:36px;height:36px;font-size:13px;}
+    .entry-headline{font-size:17px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-title"><span class="mark">C</span>カープ紙面一覧</div>
+    <div class="desk-signature">
+      <div class="cap"><b>キャップ</b>千葉教生</div>
+      <svg class="avatar-badge" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="千葉教生イラスト">
+        <circle cx="32" cy="32" r="32" fill="#FFFFFF"/>
+        <path d="M16 62 Q32 46 48 62Z" fill="#FFFFFF" stroke="#2B2B2B" stroke-width="1.6"/>
+        <path d="M20 56 L23 48 L32 52 L41 48 L44 56" fill="none" stroke="#2B7CD1" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="32" cy="30" r="14" fill="#FBEFE2" stroke="#2B2B2B" stroke-width="1.4"/>
+        <path d="M18 27 Q19 12 32 12 Q45 12 46 27 Q41 20 36 22 Q33 16 29 21 Q24 18 21 24 Q19 25 18 27Z" fill="#2B2B2B"/>
+        <rect x="20" y="27" width="9" height="7" rx="3" fill="none" stroke="#2B2B2B" stroke-width="1.6"/>
+        <rect x="35" y="27" width="9" height="7" rx="3" fill="none" stroke="#2B2B2B" stroke-width="1.6"/>
+        <line x1="29" y1="30" x2="35" y2="30" stroke="#2B2B2B" stroke-width="1.6"/>
+        <circle cx="24.3" cy="30.5" r="1.3" fill="#2B2B2B"/>
+        <circle cx="39.7" cy="30.5" r="1.3" fill="#2B2B2B"/>
+        <path d="M28 39 Q32 41.5 36 39" stroke="#2B2B2B" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+  <div class="masthead-sub" style="max-width:720px;margin:8px auto 0;">中国新聞スポーツ面 ― カープ担当デスク用 日次記録</div>
+</div>
+
+<div class="toolbar">
+  <input class="search" id="search" type="text" placeholder="日付・見出し・筆者で検索…">
+  <button class="add-btn" id="toggleForm">＋ 手入力で追加</button>
+  <button class="add-btn" id="toggleImport" style="background:var(--carp);">📋 一括インポート</button>
+</div>
+
+<div class="form-wrap" id="importWrap" style="display:none;">
+  <div class="form-card">
+    <div style="font-family:'Shippori Mincho',serif; font-weight:700; font-size:14.5px; margin-bottom:6px; color:var(--carp-deep);">JSON一括インポート</div>
+    <div style="font-size:12px; color:var(--ink-soft); margin-bottom:10px; line-height:1.6;">
+      Claudeとのチャットで紙面写真を読み取ってもらい、出てきたJSONをそのまま下に貼り付けて「読み込む」を押してください。同じ日付のデータが既にある場合は上書きされます。
+    </div>
+    <div class="field">
+      <textarea id="importText" placeholder='[{"date":"2026-06-28", "score":"広島3-2阪神", ...}]' style="min-height:160px; font-family:monospace; font-size:12px; width:100%; border:1px solid var(--rule); padding:9px 10px;"></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn-secondary" id="cancelImport">キャンセル</button>
+      <button class="btn-primary" id="runImport">読み込む</button>
+    </div>
+  </div>
+</div>
+
+<div class="upload-wrap">
+  <div class="upload-zone">
+    <input type="file" id="imgInput" accept="image/*" multiple>
+    <div class="up-title">📰 紙面写真を読み込む</div>
+    <div class="up-sub">複数枚まとめて選択OK。球炎・メーン原稿・新井語録などを自動で読み取ります</div>
+  </div>
+  <div style="text-align:center; margin-top:8px;">
+    <button id="diagTestBtn" style="background:none; border:1px solid var(--rule); color:var(--ink-soft); font-size:11px; padding:5px 10px; cursor:pointer; font-family:'Noto Sans JP',sans-serif;">🔧 API接続テスト（画像なし）</button>
+  </div>
+  <div id="diagResult" style="font-size:11.5px; text-align:center; margin-top:6px; color:var(--ink-soft); font-family:'Noto Sans JP',sans-serif;"></div>
+</div>
+
+<div class="count-line" id="countLine"></div>
+
+<div class="form-wrap" id="formWrap" style="display:none;">
+  <div class="form-card">
+    <div id="reviewBanner"></div>
+    <div class="form-grid">
+      <div class="form-row2">
+        <div class="field">
+          <label>日付</label>
+          <input type="date" id="f-date">
+        </div>
+        <div class="field">
+          <label>対戦・結果</label>
+          <input type="text" id="f-score" placeholder="広島6-1巨人">
+        </div>
+      </div>
+      <div class="field">
+        <label>勝敗</label>
+        <select id="f-result">
+          <option value="win">○ 勝ち</option>
+          <option value="loss">● 負け</option>
+          <option value="other">－ 試合以外／その他</option>
+        </select>
+      </div>
+
+      <div class="form-row2">
+        <div class="field">
+          <label>順位</label>
+          <input type="text" id="f-standing-rank" placeholder="例：4位">
+        </div>
+        <div class="field">
+          <label>星取（勝敗）</label>
+          <input type="text" id="f-standing-record" placeholder="例：33勝48敗4分">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>球炎（コラム）筆者</label>
+        <input type="text" id="f-kyuen-author" placeholder="例：千葉教生">
+      </div>
+      <div class="form-row2">
+        <div class="field">
+          <label>球炎の内容</label>
+          <input type="text" id="f-kyuen-content" placeholder="例：投手の負担">
+        </div>
+        <div class="field" style="align-self:end;">
+          <label><input type="checkbox" id="f-kyuen-photo" style="width:auto; margin-right:6px;">📷 写真あり</label>
+        </div>
+      </div>
+      <div class="form-row2">
+        <div class="field">
+          <label>球炎の採点（1〜5・お楽しみ用）</label>
+          <select id="f-kyuen-rating">
+            <option value="0">評価なし</option>
+            <option value="1">★☆☆☆☆（1）</option>
+            <option value="2">★★☆☆☆（2）</option>
+            <option value="3">★★★☆☆（3）</option>
+            <option value="4">★★★★☆（4）</option>
+            <option value="5">★★★★★（5）</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>採点の一言コメント</label>
+          <input type="text" id="f-kyuen-rating-note" placeholder="例：比喩が効いていた">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>メーン原稿 執筆者（記事末尾の「（〇〇）」表記から）</label>
+        <input type="text" id="f-main-author" placeholder="例：山本堅太郎">
+      </div>
+      <div class="form-row2">
+        <div class="field">
+          <label>メーン原稿の内容</label>
+          <input type="text" id="f-main-content" placeholder="例：斉藤優初勝利">
+        </div>
+        <div class="field" style="align-self:end;">
+          <label><input type="checkbox" id="f-main-photo" style="width:auto; margin-right:6px;">📷 写真あり</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>ほかの原稿（1行に1本。写真がある行の先頭に📷を付けてください）</label>
+        <textarea id="f-others" placeholder="例：📷 ファビアン2ラン&#10;小園が適時打"></textarea>
+      </div>
+
+      <div class="field">
+        <label>カープ2軍 筆者</label>
+        <input type="text" id="f-nigun-author" placeholder="例：中川晃平">
+      </div>
+      <div class="form-row2">
+        <div class="field">
+          <label>カープ2軍の内容</label>
+          <input type="text" id="f-nigun-content" placeholder="例：杉田が左脚つり降板">
+        </div>
+        <div class="field" style="align-self:end;">
+          <label><input type="checkbox" id="f-nigun-photo" style="width:auto; margin-right:6px;">📷 写真あり</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>新井語録</label>
+        <input type="text" id="f-arai" placeholder="例：切り替えたい">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-secondary" id="cancelForm">キャンセル</button>
+      <button class="btn-primary" id="saveForm">保存する</button>
+    </div>
+  </div>
+</div>
+
+<div class="entries" id="entries"></div>
+<div class="toast" id="toast"></div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="spin"></div>
+    <div class="ov-title">紙面を読み取り中…</div>
+    <div class="ov-sub" id="overlaySub">しばらくお待ちください</div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'entries';
+let entries = [];
+let editingId = null;
+let reviewQueue = []; // drafts waiting for user confirmation after image extraction
+let isReviewing = false;
+
+const seedEntries = [
+  {
+    id: 's1', date: '2026-07-22', score: '巨人11-5広島', result: 'loss',
+    standing: {rank:'4位', record:'33勝48敗4分'},
+    kyuen: {author:'千葉教生', content:'点差開いても消えぬ声援', photo:false, rating:4, ratingNote:'大敗の夜でも読ませる粘り腰'},
+    main: {author:'', content:'岡本炎上、修正できず。4回途中で自己ワースト9失点でKO', photo:true},
+    others: [
+      {content:'小園が適時打、8試合ぶり', photo:true},
+      {content:'失策の菊池、意地の一発', photo:false},
+      {content:'育成の杉田と支配下契約', photo:false},
+      {content:'肩の故障克服、山崎が今季初勝利', photo:true}
+    ],
+    nigun: {author:'', content:'', photo:false},
+    arai: '岡本、ここを乗り越えて'
+  },
+  {
+    id: 's2', date: '2026-07-23', score: '広島6-1巨人', result: 'win',
+    standing: {rank:'4位', record:'34勝48敗4分'},
+    kyuen: {author:'千葉教生', content:'持丸、後輩導く好リード', photo:false, rating:3, ratingNote:'手堅いがやや定番の切り口'},
+    main: {author:'', content:'斉藤優がプロ初勝利。5回1失点、ピンチでも動じず', photo:true},
+    others: [
+      {content:'持丸が勝ち越し5号本塁打', photo:false},
+      {content:'モンテロが完璧な同点ソロ', photo:true}
+    ],
+    nigun: {author:'', content:'杉田、左脚つり降板。五回途中2失点', photo:true},
+    arai: '斉藤優は素晴らしい素質'
+  },
+  {
+    id: 's3', date: '2026-07-24', score: '（試合結果面なし・特集紙面）', result: 'other',
+    standing: {rank:'4位', record:'35勝48敗4分'},
+    kyuen: {author:'', content:'', photo:false, rating:0, ratingNote:''},
+    main: {author:'', content:'ファビアン、打線の主軸に。7月はリーグ2位の7本塁打で復調の兆し', photo:true},
+    others: [
+      {content:'栗林「野手信じて投げる」、翌日の先発を予告', photo:false},
+      {content:'天谷宗一郎、27本塁打の疾走劇（コラム「至極の一振り」）', photo:true}
+    ],
+    nigun: {author:'', content:'大瀬良、暑さの中5回1失点で踏ん張る', photo:true},
+    arai: ''
+  },
+  {
+    id: 's4', date: '2026-07-25', score: 'ヤクルト5-3広島（延長12回）', result: 'loss',
+    standing: {rank:'4位', record:'35勝49敗4分'},
+    kyuen: {author:'池本泰尚', content:'痛みに耐え成長を待つ', photo:false, rating:5, ratingNote:'サヨナラ負けの夜に「待つ」視点が光る'},
+    main: {author:'', content:'菊地「失投」でサヨナラ被弾。延長12回、あと1人を打ち取れず', photo:true},
+    others: [
+      {content:'坂倉が2打席連続適時打も及ばず', photo:true},
+      {content:'アドゥワ、粘投も実らず', photo:true}
+    ],
+    nigun: {author:'', content:'', photo:false},
+    arai: '菊地、また成長につなげて'
+  }
+];
+
+function stampChar(result){
+  if(result === 'win') return '○';
+  if(result === 'loss') return '●';
+  return '－';
+}
+function stampClass(result){
+  if(result === 'win') return 'win';
+  if(result === 'loss') return 'loss';
+  return 'other';
+}
+function fmtDate(d){
+  if(!d) return '日付未設定';
+  const dt = new Date(d + 'T00:00:00');
+  if(isNaN(dt.getTime())) return d;
+  const days = ['日','月','火','水','木','金','土'];
+  return `${dt.getFullYear()}年${dt.getMonth()+1}月${dt.getDate()}日（${days[dt.getDay()]}）`;
+}
+
+async function loadEntries(){
+  try{
+    const result = await window.storage.get(STORAGE_KEY, false);
+    entries = result ? JSON.parse(result.value) : seedEntries;
+  }catch(e){
+    entries = seedEntries;
+  }
+  render();
+}
+
+async function persist(){
+  try{
+    await window.storage.set(STORAGE_KEY, JSON.stringify(entries), false);
+  }catch(e){
+    showToast('保存に失敗しました');
+  }
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(()=> t.classList.remove('show'), 2600);
+}
+
+function secRow(label, authorText, contentText, isQuote, hasPhoto){
+  const hasContent = (contentText && contentText.trim()) || (authorText && authorText.trim());
+  if(!hasContent){
+    return `<div class="sec-row"><div class="sec-label">${label}</div><div class="sec-value empty">記載なし</div></div>`;
+  }
+  const valClass = isQuote ? 'sec-value quote' : 'sec-value';
+  const who = authorText ? `<span class="who">${escapeHtml(authorText)}</span>` : '';
+  const mark = hasPhoto ? `<span class="photo-mark">📷</span>` : '';
+  return `<div class="sec-row"><div class="sec-label">${label}</div><div class="${valClass}">${who}${escapeHtml(contentText||'')}${mark}</div></div>`;
+}
+
+function starString(n){
+  const v = Math.max(0, Math.min(5, n||0));
+  return '★'.repeat(v) + '☆'.repeat(5-v);
+}
+
+function kyuenRow(kyuen){
+  const k = kyuen || {};
+  const hasContent = (k.content && k.content.trim()) || (k.author && k.author.trim());
+  if(!hasContent){
+    return `<div class="sec-row"><div class="sec-label">球炎</div><div class="sec-value empty">記載なし</div></div>`;
+  }
+  const who = k.author ? `<span class="who">${escapeHtml(k.author)}</span>` : '';
+  const mark = k.photo ? `<span class="photo-mark">📷</span>` : '';
+  let ratingHtml = '';
+  if(k.rating && k.rating > 0){
+    const noteHtml = k.ratingNote ? `<span class="kyuen-rating-note">（${escapeHtml(k.ratingNote)}）</span>` : '';
+    ratingHtml = `<div class="kyuen-rating"><span class="stars">${starString(k.rating)}</span><span class="rating-label">デスク採点</span>${noteHtml}</div>`;
+  }
+  return `<div class="sec-row"><div class="sec-label">球炎</div><div class="sec-value">${who}${escapeHtml(k.content||'')}${mark}${ratingHtml}</div></div>`;
+}
+
+function othersRow(others){
+  const list = (others||[]).filter(o => o && o.content && o.content.trim());
+  if(list.length === 0){
+    return `<div class="sec-row"><div class="sec-label">ほかの原稿</div><div class="sec-value empty">記載なし</div></div>`;
+  }
+  const items = list.map(o=>`<li>${escapeHtml(o.content)}${o.photo ? '<span class="photo-mark">📷</span>' : ''}</li>`).join('');
+  return `<div class="sec-row"><div class="sec-label">ほかの原稿</div><div class="sec-value"><ul>${items}</ul></div></div>`;
+}
+
+function standingTag(standing){
+  if(!standing || (!standing.rank && !standing.record)) return '';
+  const parts = [standing.rank, standing.record].filter(Boolean).join(' ');
+  return `<span class="standing-tag">${escapeHtml(parts)}</span>`;
+}
+
+function render(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const list = document.getElementById('entries');
+  const sorted = [...entries].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+
+  const searchable = (e) => [
+    e.date, e.score,
+    e.standing && e.standing.rank, e.standing && e.standing.record,
+    e.kyuen && e.kyuen.author, e.kyuen && e.kyuen.content, e.kyuen && e.kyuen.ratingNote,
+    e.main && e.main.author, e.main && e.main.content,
+    ...((e.others||[]).map(o=>o && o.content)),
+    e.nigun && e.nigun.author, e.nigun && e.nigun.content,
+    e.arai
+  ].filter(Boolean).join(' ').toLowerCase();
+
+  const filtered = q ? sorted.filter(e => searchable(e).includes(q)) : sorted;
+
+  document.getElementById('countLine').textContent = `全 ${entries.length} 件${q ? ` ／ 検索結果 ${filtered.length} 件` : ''}`;
+
+  if(filtered.length === 0){
+    list.innerHTML = `<div class="empty-state"><div class="big">記事がありません</div>該当する記録が見つかりませんでした。</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(e => `
+    <div class="entry" data-id="${e.id}">
+      <div class="stamp ${stampClass(e.result)}">${stampChar(e.result)}</div>
+      <div>
+        <div class="entry-eyebrow">
+          <span class="day">${fmtDate(e.date)}</span>
+          ${e.score ? `<span class="score">${escapeHtml(e.score)}</span>` : ''}
+          ${standingTag(e.standing)}
+        </div>
+        <div class="sec-table">
+          ${kyuenRow(e.kyuen)}
+          ${secRow('メーン原稿', e.main && e.main.author, e.main && e.main.content, false, e.main && e.main.photo)}
+          ${othersRow(e.others)}
+          ${secRow('カープ2軍', e.nigun && e.nigun.author, e.nigun && e.nigun.content, false, e.nigun && e.nigun.photo)}
+          ${secRow('新井語録', '', e.arai, true, false)}
+        </div>
+        <div class="entry-footer">
+          <span class="entry-actions">
+            <button data-act="edit">編集</button>
+            <button data-act="delete">削除</button>
+          </span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('.entry').forEach(el=>{
+    const id = el.dataset.id;
+    el.querySelector('[data-act="edit"]').addEventListener('click', ()=> openForm(id));
+    el.querySelector('[data-act="delete"]').addEventListener('click', ()=> deleteEntry(id));
+  });
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function othersToText(others){
+  return (others || []).map(o => (o && o.photo ? '📷 ' : '') + (o && o.content ? o.content : '')).join('\n');
+}
+function textToOthers(text){
+  return text.split('\n').map(line => line.trim()).filter(Boolean).map(line => {
+    if(line.startsWith('📷')){
+      return { content: line.replace(/^📷\s*/, '').trim(), photo: true };
+    }
+    return { content: line, photo: false };
+  });
+}
+
+function fillFormFromDraft(d){
+  document.getElementById('f-date').value = d.date || '';
+  document.getElementById('f-score').value = d.score || '';
+  document.getElementById('f-result').value = d.result || 'other';
+  document.getElementById('f-standing-rank').value = (d.standing && d.standing.rank) || '';
+  document.getElementById('f-standing-record').value = (d.standing && d.standing.record) || '';
+  document.getElementById('f-kyuen-author').value = (d.kyuen && d.kyuen.author) || '';
+  document.getElementById('f-kyuen-content').value = (d.kyuen && d.kyuen.content) || '';
+  document.getElementById('f-kyuen-photo').checked = !!(d.kyuen && d.kyuen.photo);
+  document.getElementById('f-kyuen-rating').value = (d.kyuen && d.kyuen.rating) || '0';
+  document.getElementById('f-kyuen-rating-note').value = (d.kyuen && d.kyuen.ratingNote) || '';
+  document.getElementById('f-main-author').value = (d.main && d.main.author) || '';
+  document.getElementById('f-main-content').value = (d.main && d.main.content) || '';
+  document.getElementById('f-main-photo').checked = !!(d.main && d.main.photo);
+  document.getElementById('f-others').value = othersToText(d.others);
+  document.getElementById('f-nigun-author').value = (d.nigun && d.nigun.author) || '';
+  document.getElementById('f-nigun-content').value = (d.nigun && d.nigun.content) || '';
+  document.getElementById('f-nigun-photo').checked = !!(d.nigun && d.nigun.photo);
+  document.getElementById('f-arai').value = d.arai || '';
+}
+
+function openForm(id){
+  editingId = id || null;
+  isReviewing = false;
+  document.getElementById('reviewBanner').innerHTML = '';
+  const form = document.getElementById('formWrap');
+  form.style.display = 'block';
+  form.scrollIntoView({behavior:'smooth', block:'start'});
+
+  if(id){
+    fillFormFromDraft(entries.find(x=>x.id===id));
+  }else{
+    fillFormFromDraft({date: new Date().toISOString().slice(0,10), result:'win'});
+  }
+}
+
+function closeForm(){
+  document.getElementById('formWrap').style.display = 'none';
+  editingId = null;
+  isReviewing = false;
+  document.getElementById('reviewBanner').innerHTML = '';
+}
+
+function readFormData(){
+  return {
+    date: document.getElementById('f-date').value,
+    score: document.getElementById('f-score').value.trim(),
+    result: document.getElementById('f-result').value,
+    standing: {
+      rank: document.getElementById('f-standing-rank').value.trim(),
+      record: document.getElementById('f-standing-record').value.trim()
+    },
+    kyuen: {
+      author: document.getElementById('f-kyuen-author').value.trim(),
+      content: document.getElementById('f-kyuen-content').value.trim(),
+      photo: document.getElementById('f-kyuen-photo').checked,
+      rating: parseInt(document.getElementById('f-kyuen-rating').value, 10) || 0,
+      ratingNote: document.getElementById('f-kyuen-rating-note').value.trim()
+    },
+    main: {
+      author: document.getElementById('f-main-author').value.trim(),
+      content: document.getElementById('f-main-content').value.trim(),
+      photo: document.getElementById('f-main-photo').checked
+    },
+    others: textToOthers(document.getElementById('f-others').value),
+    nigun: {
+      author: document.getElementById('f-nigun-author').value.trim(),
+      content: document.getElementById('f-nigun-content').value.trim(),
+      photo: document.getElementById('f-nigun-photo').checked
+    },
+    arai: document.getElementById('f-arai').value.trim()
+  };
+}
+
+async function saveForm(){
+  const data = readFormData();
+  if(!data.date){
+    showToast('日付は必須です');
+    return;
+  }
+  if(editingId){
+    const idx = entries.findIndex(x=>x.id===editingId);
+    entries[idx] = {...entries[idx], ...data};
+  }else{
+    entries.push({id: 'e' + Date.now() + Math.random().toString(36).slice(2,6), ...data});
+  }
+  await persist();
+  render();
+  showToast('保存しました');
+
+  if(isReviewing && reviewQueue.length > 0){
+    startNextReview();
+  }else{
+    closeForm();
+  }
+}
+
+async function deleteEntry(id){
+  if(!confirm('この記録を削除しますか？')) return;
+  entries = entries.filter(e=>e.id!==id);
+  await persist();
+  render();
+  showToast('削除しました');
+}
+
+document.getElementById('toggleForm').addEventListener('click', ()=>{
+  const form = document.getElementById('formWrap');
+  document.getElementById('importWrap').style.display = 'none';
+  if(form.style.display === 'block'){ closeForm(); }
+  else{ openForm(null); }
+});
+document.getElementById('cancelForm').addEventListener('click', ()=>{
+  if(isReviewing && reviewQueue.length > 0){
+    showToast('この1枚をスキップしました');
+    startNextReview();
+  }else{
+    closeForm();
+  }
+});
+document.getElementById('saveForm').addEventListener('click', saveForm);
+document.getElementById('search').addEventListener('input', render);
+
+/* ---------------- JSON bulk import ---------------- */
+
+function normalizeImportedEntry(raw){
+  const norm = (v) => (v === undefined || v === null) ? '' : v;
+  return {
+    id: 'e' + Date.now() + Math.random().toString(36).slice(2,6),
+    date: norm(raw.date),
+    score: norm(raw.score),
+    result: ['win','loss','other'].includes(raw.result) ? raw.result : 'other',
+    standing: {
+      rank: norm(raw.standing && raw.standing.rank),
+      record: norm(raw.standing && raw.standing.record)
+    },
+    kyuen: {
+      author: norm(raw.kyuen && raw.kyuen.author),
+      content: norm(raw.kyuen && raw.kyuen.content),
+      photo: !!(raw.kyuen && raw.kyuen.photo),
+      rating: (raw.kyuen && Number.isInteger(raw.kyuen.rating)) ? raw.kyuen.rating : 0,
+      ratingNote: norm(raw.kyuen && raw.kyuen.ratingNote)
+    },
+    main: {
+      author: norm(raw.main && raw.main.author),
+      content: norm(raw.main && raw.main.content),
+      photo: !!(raw.main && raw.main.photo)
+    },
+    others: Array.isArray(raw.others) ? raw.others
+      .filter(o => o && (o.content || typeof o === 'string'))
+      .map(o => typeof o === 'string' ? {content:o, photo:false} : {content: norm(o.content), photo: !!o.photo})
+      : [],
+    nigun: {
+      author: norm(raw.nigun && raw.nigun.author),
+      content: norm(raw.nigun && raw.nigun.content),
+      photo: !!(raw.nigun && raw.nigun.photo)
+    },
+    arai: norm(raw.arai)
+  };
+}
+
+async function runImport(){
+  const raw = document.getElementById('importText').value.trim();
+  if(!raw){
+    showToast('JSONを貼り付けてください');
+    return;
+  }
+  let parsed;
+  try{
+    parsed = JSON.parse(raw);
+  }catch(e){
+    showToast('JSON形式エラー：貼り付けた内容を確認してください');
+    return;
+  }
+  const list = Array.isArray(parsed) ? parsed : [parsed];
+  if(list.length === 0){
+    showToast('データが空です');
+    return;
+  }
+
+  let added = 0, updated = 0;
+  list.forEach(rawEntry => {
+    const entry = normalizeImportedEntry(rawEntry);
+    if(!entry.date){ return; }
+    const existingIdx = entries.findIndex(e => e.date === entry.date);
+    if(existingIdx >= 0){
+      entry.id = entries[existingIdx].id;
+      entries[existingIdx] = entry;
+      updated++;
+    }else{
+      entries.push(entry);
+      added++;
+    }
+  });
+
+  await persist();
+  render();
+  document.getElementById('importText').value = '';
+  document.getElementById('importWrap').style.display = 'none';
+  showToast(`インポート完了：新規${added}件／更新${updated}件`);
+}
+
+document.getElementById('toggleImport').addEventListener('click', ()=>{
+  const panel = document.getElementById('importWrap');
+  const otherForm = document.getElementById('formWrap');
+  otherForm.style.display = 'none';
+  panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+  if(panel.style.display === 'block'){
+    panel.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+});
+document.getElementById('cancelImport').addEventListener('click', ()=>{
+  document.getElementById('importWrap').style.display = 'none';
+  document.getElementById('importText').value = '';
+});
+document.getElementById('runImport').addEventListener('click', runImport);
+
+/* ---------------- Image extraction ---------------- */
+
+function fileToResizedBase64(file, maxDim, quality){
+  maxDim = maxDim || 1280;
+  quality = quality || 0.78;
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if(width > maxDim || height > maxDim){
+          const scale = Math.min(maxDim / width, maxDim / height);
+          width = Math.round(width * scale);
+          height = Math.round(height * scale);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve({ base64: dataUrl.split(',')[1], mediaType: 'image/jpeg' });
+      };
+      img.onerror = () => reject(new Error('画像の読み込みに失敗しました'));
+      img.src = reader.result;
+    };
+    reader.onerror = () => reject(new Error('ファイルの読み込みに失敗しました'));
+    reader.readAsDataURL(file);
+  });
+}
+
+const EXTRACT_PROMPT = `あなたは中国新聞のカープ担当デスクの補助です。添付された画像は、カープ（広島東洋カープ）を扱う新聞のスポーツ面です。
+この紙面を読み取り、以下のJSON形式で「厳密にJSONのみ」を返してください（説明文やマークダウンのコードフェンスは一切不要です）。できるだけ簡潔に、各項目は一言〜二言程度にまとめてください。
+
+{
+  "date": "紙面の日付をYYYY-MM-DD形式で。分からなければ空文字",
+  "score": "対戦カードと点差。例: 広島6-1巨人。試合結果面がなければ空文字",
+  "result": "カープ視点で win / loss / other のいずれか",
+  "standing_rank": "紙面のセ・リーグ勝敗表に載っている広島の順位。例: 4位。分からなければ空文字",
+  "standing_record": "同じ表の広島の成績。例: 33勝48敗4分。分からなければ空文字",
+  "kyuen_author": "「球炎」コラムの筆者名。なければ空文字",
+  "kyuen_content": "「球炎」コラムの内容を一言で。なければ空文字",
+  "kyuen_photo": true または false。「球炎」欄に写真が付いているか,
+  "kyuen_rating": "「球炎」コラムの出来を、あなた（AI）自身の主観で1〜5の整数で採点。文章の切れ味・視点の面白さなどをお楽しみとして評価。判断材料が乏しければ0",
+  "kyuen_rating_note": "その採点の理由を一言で（お楽しみ用のコメント）。なければ空文字",
+  "main_author": "紙面のメーン記事（一番大きな見出し）の筆者名。記事本文の末尾に（山本堅太郎）のようにカッコ書きで署名があることが多いので、そこから読み取る。なければ空文字",
+  "main_content": "メーン記事の内容を一言で",
+  "main_photo": true または false。メーン記事に写真が付いているか,
+  "others": [
+    {"content": "ほかの記事の内容を一言で", "photo": true または false（その記事に写真が付いているか）}
+  ],
+  "nigun_author": "「カープ2軍」コーナー（紙面下部に毎回ある2軍・ファーム関連コーナー。リハビリ登板の記事もここに含む）の筆者名。なければ空文字",
+  "nigun_content": "「カープ2軍」コーナーの内容を一言で。なければ空文字",
+  "nigun_photo": true または false。「カープ2軍」コーナーに写真が付いているか,
+  "arai_quote": "「新井語録」欄の発言内容。なければ空文字"
+}
+
+othersは最大4件程度までにしてください。写真の有無は各記事ごとに個別に判定してください。署名は記事末尾のカッコ書き人名を優先的に探してください。kyuen_ratingはあくまでお楽しみの主観評価です。不確かな情報は無理に埋めず、空文字・false・0・空配列にしてください。実在しない人名を創作しないでください。`;
+
+async function extractFromImage(base64, mediaType){
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 2000,
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
+            { type: "text", text: EXTRACT_PROMPT }
+          ]
+        }
+      ]
+    })
+  });
+
+  if(!response.ok){
+    let msg = `APIエラー（${response.status}）`;
+    try{
+      const errBody = await response.json();
+      if(errBody && errBody.error && errBody.error.message) msg += `: ${errBody.error.message}`;
+    }catch(e){}
+    throw new Error(msg);
+  }
+
+  const data = await response.json();
+  if(data.error){
+    throw new Error(`APIエラー: ${data.error.message || JSON.stringify(data.error)}`);
+  }
+  if(data.stop_reason === 'max_tokens'){
+    throw new Error('応答が長すぎて途中で切れました（紙面の情報量が多い可能性があります）');
+  }
+  const textBlock = (data.content || []).find(b => b.type === 'text');
+  if(!textBlock) throw new Error('画像から文字情報を取得できませんでした');
+
+  let clean = textBlock.text.replace(/```json|```/g, '').trim();
+  const firstBrace = clean.indexOf('{');
+  const lastBrace = clean.lastIndexOf('}');
+  if(firstBrace >= 0 && lastBrace > firstBrace){
+    clean = clean.slice(firstBrace, lastBrace + 1);
+  }
+
+  let parsed;
+  try{
+    parsed = JSON.parse(clean);
+  }catch(e){
+    throw new Error('読み取り結果の解析に失敗しました（JSON形式エラー）');
+  }
+
+  return {
+    date: parsed.date || '',
+    score: parsed.score || '',
+    result: ['win','loss','other'].includes(parsed.result) ? parsed.result : 'other',
+    standing: { rank: parsed.standing_rank || '', record: parsed.standing_record || '' },
+    kyuen: {
+      author: parsed.kyuen_author || '',
+      content: parsed.kyuen_content || '',
+      photo: !!parsed.kyuen_photo,
+      rating: Number.isInteger(parsed.kyuen_rating) ? parsed.kyuen_rating : (parseInt(parsed.kyuen_rating, 10) || 0),
+      ratingNote: parsed.kyuen_rating_note || ''
+    },
+    main: { author: parsed.main_author || '', content: parsed.main_content || '', photo: !!parsed.main_photo },
+    others: Array.isArray(parsed.others) ? parsed.others
+      .filter(o => o && o.content)
+      .map(o => ({ content: o.content, photo: !!o.photo })) : [],
+    nigun: { author: parsed.nigun_author || '', content: parsed.nigun_content || '', photo: !!parsed.nigun_photo },
+    arai: parsed.arai_quote || ''
+  };
+}
+
+function startNextReview(){
+  if(reviewQueue.length === 0){
+    closeForm();
+    showToast('すべての紙面を確認しました');
+    return;
+  }
+  const next = reviewQueue.shift();
+  editingId = null;
+  isReviewing = true;
+  fillFormFromDraft(next.draft || {date:'', result:'other'});
+  const form = document.getElementById('formWrap');
+  form.style.display = 'block';
+  form.scrollIntoView({behavior:'smooth', block:'start'});
+
+  const remain = reviewQueue.length;
+  const banner = document.getElementById('reviewBanner');
+  if(next.error){
+    banner.innerHTML = `<div class="review-banner">⚠️ ${escapeHtml(next.fileName)} の自動読み取りに失敗しました：${escapeHtml(next.errorMessage || '不明なエラー')}。手入力してください。（残り ${remain} 件）</div>`;
+  }else{
+    banner.innerHTML = `<div class="review-banner">📰 ${escapeHtml(next.fileName)} を自動読み取りしました。内容を確認して保存してください。（残り ${remain} 件）</div>`;
+  }
+}
+
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+async function extractWithRetry(base64, mediaType, sub, label){
+  const attempts = 2;
+  let lastErr;
+  for(let a=1; a<=attempts; a++){
+    try{
+      return await extractFromImage(base64, mediaType);
+    }catch(err){
+      lastErr = err;
+      console.error(`抽出エラー（試行${a}/${attempts}）:`, err);
+      if(a < attempts){
+        if(sub) sub.textContent = `${label} 通信エラー、再試行しています…`;
+        await sleep(1200);
+      }
+    }
+  }
+  throw lastErr;
+}
+
+async function handleFiles(fileList){
+  const files = Array.from(fileList);
+  if(files.length === 0) return;
+
+  const overlay = document.getElementById('overlay');
+  const sub = document.getElementById('overlaySub');
+  overlay.classList.add('show');
+
+  const drafts = [];
+  for(let i=0;i<files.length;i++){
+    const label = `${i+1} / ${files.length} 枚目`;
+    sub.textContent = `${label}を解析中…`;
+    const file = files[i];
+    try{
+      const { base64, mediaType } = await fileToResizedBase64(file);
+      const draft = await extractWithRetry(base64, mediaType, sub, label);
+      drafts.push({fileName: file.name, draft, error:false});
+    }catch(err){
+      console.error('抽出エラー（最終）:', err);
+      drafts.push({fileName: file.name, draft: {date:'', result:'other'}, error:true, errorMessage: (err && err.message) || String(err)});
+    }
+  }
+
+  overlay.classList.remove('show');
+  reviewQueue = drafts;
+  startNextReview();
+}
+
+document.getElementById('imgInput').addEventListener('change', (e)=>{
+  handleFiles(e.target.files);
+  e.target.value = '';
+});
+
+document.getElementById('diagTestBtn').addEventListener('click', async ()=>{
+  const resultEl = document.getElementById('diagResult');
+  resultEl.textContent = 'テスト送信中…';
+  resultEl.style.color = 'var(--ink-soft)';
+  try{
+    const t0 = Date.now();
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 20,
+        messages: [{ role: "user", content: "「OK」とだけ返してください。" }]
+      })
+    });
+    const ms = Date.now() - t0;
+    if(!response.ok){
+      let msg = `HTTPエラー ${response.status}`;
+      try{
+        const errBody = await response.json();
+        if(errBody && errBody.error && errBody.error.message) msg += `: ${errBody.error.message}`;
+      }catch(e){}
+      resultEl.textContent = `❌ 失敗（${ms}ms）: ${msg}`;
+      resultEl.style.color = 'var(--carp-deep)';
+      return;
+    }
+    const data = await response.json();
+    if(data.error){
+      resultEl.textContent = `❌ 失敗（${ms}ms）: ${data.error.message || JSON.stringify(data.error)}`;
+      resultEl.style.color = 'var(--carp-deep)';
+      return;
+    }
+    const textBlock = (data.content || []).find(b => b.type === 'text');
+    resultEl.textContent = `✅ 成功（${ms}ms）: 応答「${textBlock ? textBlock.text.trim() : '(空)'}」`;
+    resultEl.style.color = '#2f5d3a';
+  }catch(err){
+    resultEl.textContent = `❌ 例外エラー: ${(err && err.message) || String(err)}`;
+    resultEl.style.color = 'var(--carp-deep)';
+  }
+});
+
+
+loadEntries();
+</script>
+</body>
+</html>
