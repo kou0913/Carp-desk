@@ -551,6 +551,10 @@
     <div class="up-title">📰 紙面写真を読み込む</div>
     <div class="up-sub">複数枚まとめて選択OK。球炎・メーン原稿・新井語録などを自動で読み取ります</div>
   </div>
+  <div style="text-align:center; margin-top:10px;">
+    <input type="password" id="apiKeyInput" placeholder="Anthropic APIキー（sk-ant-...）" autocomplete="off" style="width:100%; max-width:360px; padding:8px 10px; border:1px solid var(--rule); font-size:12px; font-family:monospace; color:var(--ink);">
+    <div style="font-size:10.5px; color:var(--ink-soft); margin-top:4px;">このブラウザにのみ保存されます（このデバイス以外・サーバーには送信されません）</div>
+  </div>
   <div style="text-align:center; margin-top:8px;">
     <button id="diagTestBtn" style="background:none; border:1px solid var(--rule); color:var(--ink-soft); font-size:11px; padding:5px 10px; cursor:pointer; font-family:'Noto Sans JP',sans-serif;">🔧 API接続テスト（画像なし）</button>
   </div>
@@ -760,8 +764,8 @@ function fmtDate(d){
 
 async function loadEntries(){
   try{
-    const result = await window.storage.get(STORAGE_KEY, false);
-    entries = result ? JSON.parse(result.value) : seedEntries;
+    const raw = localStorage.getItem(STORAGE_KEY);
+    entries = raw ? JSON.parse(raw) : seedEntries;
   }catch(e){
     entries = seedEntries;
   }
@@ -770,7 +774,7 @@ async function loadEntries(){
 
 async function persist(){
   try{
-    await window.storage.set(STORAGE_KEY, JSON.stringify(entries), false);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
   }catch(e){
     showToast('保存に失敗しました');
   }
@@ -1182,10 +1186,37 @@ const EXTRACT_PROMPT = `あなたは中国新聞のカープ担当デスクの�
 
 othersは最大4件程度までにしてください。写真の有無は各記事ごとに個別に判定してください。署名は記事末尾のカッコ書き人名を優先的に探してください。kyuen_ratingはあくまでお楽しみの主観評価です。不確かな情報は無理に埋めず、空文字・false・0・空配列にしてください。実在しない人名を創作しないでください。`;
 
+const API_KEY_STORAGE = 'anthropicApiKey';
+
+function getApiKey(){
+  const input = document.getElementById('apiKeyInput');
+  return (input && input.value || '').trim();
+}
+
+function initApiKeyField(){
+  const input = document.getElementById('apiKeyInput');
+  const saved = localStorage.getItem(API_KEY_STORAGE);
+  if(saved) input.value = saved;
+  input.addEventListener('change', ()=>{
+    const v = input.value.trim();
+    if(v) localStorage.setItem(API_KEY_STORAGE, v);
+    else localStorage.removeItem(API_KEY_STORAGE);
+  });
+}
+
 async function extractFromImage(base64, mediaType){
+  const apiKey = getApiKey();
+  if(!apiKey){
+    throw new Error('APIキーが入力されていません。上の「Anthropic APIキー」欄に入力してください。');
+  }
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true"
+    },
     body: JSON.stringify({
       model: "claude-sonnet-4-6",
       max_tokens: 2000,
@@ -1333,13 +1364,24 @@ document.getElementById('imgInput').addEventListener('change', (e)=>{
 
 document.getElementById('diagTestBtn').addEventListener('click', async ()=>{
   const resultEl = document.getElementById('diagResult');
+  const apiKey = getApiKey();
+  if(!apiKey){
+    resultEl.textContent = '❌ 上の「Anthropic APIキー」欄にAPIキーを入力してください。';
+    resultEl.style.color = 'var(--carp-deep)';
+    return;
+  }
   resultEl.textContent = 'テスト送信中…';
   resultEl.style.color = 'var(--ink-soft)';
   try{
     const t0 = Date.now();
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
         max_tokens: 20,
@@ -1373,6 +1415,7 @@ document.getElementById('diagTestBtn').addEventListener('click', async ()=>{
 });
 
 
+initApiKeyField();
 loadEntries();
 </script>
 </body>
